@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import auth from './routes/auth.route.js';
 import product from './routes/product.route.js';
 import cartRoutes from './routes/cart.route.js';
+import couponRoutes from './routes/coupon.route.js';
 
 dotenv.config();
 
@@ -16,7 +17,8 @@ app.use(cookieParser());
 
 app.use("/api/auth", auth);
 app.use("/api/product", product);
-app.use("/cart/product",cartRoutes);
+app.use("/api/cart",cartRoutes);
+app.use("/api/coupon",couponRoutes);
 
 
 app.listen(3000,()=>{
