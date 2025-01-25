@@ -7,6 +7,10 @@ import auth from './routes/auth.route.js';
 import product from './routes/product.route.js';
 import cartRoutes from './routes/cart.route.js';
 import couponRoutes from './routes/coupon.route.js';
+import paymentRoutes from './routes/payment.route.js';
+import analyticsRoutes from './routes/analytics.route.js';
+import { protectRoute } from './middleware/auth.middleware.js';
+import { getProfile } from './controllers/auth.controller.js';
 
 dotenv.config();
 
@@ -19,6 +23,10 @@ app.use("/api/auth", auth);
 app.use("/api/product", product);
 app.use("/api/cart",cartRoutes);
 app.use("/api/coupon",couponRoutes);
+app.use("/api/payments",paymentRoutes);
+app.use("api/analytics",analyticsRoutes);
+app.use("/api/profile",protectRoute, getProfile )
+//app.use("api/analytics",require('./routes/analytics.route.js'));
 
 
 app.listen(3000,()=>{
