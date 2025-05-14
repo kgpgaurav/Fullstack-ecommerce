@@ -1,10 +1,11 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
 
-const userSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema(
+    {
     name:{
         type:String,
-        required:[true, "Name is required"]
+        required:[true, "Name is required"]  //string also gives the message 
     },
     email:{
         type:String,
@@ -35,32 +36,30 @@ const userSchema = new mongoose.Schema({
         enum:["customer","admin"],
         default:"customer"
     }
-},{//createdAt, updatedAt
-    timestamps:true
-}
+    },
+    {//createdAt, updatedAt
+        timestamps:true
+    }
 );
 
-
-
 //Pre-save hook to hash password before saving to database
-
 userSchema.pre("save", async function(next){
     try{
-    if(!this.isModified("password")) 
-        return next();
+        if(!this.isModified("password")) 
+            return next();
 
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-        
-    next();
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+            
+        next();
     }
     catch(error){
         next(error)
     }
 })
 //If you are using Mongoose, methods is an object where you can define instance methods for your schema. These methods can be called on instances of the model.
-userSchema.methods.compareP= async function(password){
+userSchema.methods.compareP = async function(password){
     return bcrypt.compare(password, this.password);
 };
-const user = mongoose.model("User", userSchema);
-export default user;
+const User = mongoose.model("User", userSchema);
+export default User;

@@ -8,7 +8,10 @@ router.get("/",protectRoute, adminRoute, getAllProducts);
 router.get("/featured", getFeaturedProducts);
 router.get("/category", getProductsByCategory);
 router.get("/recommendations", getRecommendedProducts);
+
+//products can be only post or deleted or edit by the admin
 router.post("/",protectRoute, adminRoute, createProduct);
 router.put("/:id",protectRoute, adminRoute, toggleFeaturedProduct);
 router.delete("/:id",protectRoute, adminRoute, deleteProduct);
+
 export default router;

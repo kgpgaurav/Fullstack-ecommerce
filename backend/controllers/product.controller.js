@@ -11,14 +11,12 @@ export const getAllProducts = async (req, res) => {
         res.status(500).json({message:error.message});
     }
 };
-
 export  const getFeaturedProducts=async(req, res)=>{
     try{
        let featuredProducts= await redis.get("featured_products");
        if(featuredProducts){
            return res.json(JSON.parse(featuredProducts));
        }
-
        //if not in redis, we should fetch from mongoDB
        //.lean is gonna return a plain javascript object instead of a mongoose object which is more efficient
        featuredProducts=await Product.find({isFeatured:true}).lean(); 
