@@ -4,9 +4,9 @@ import { protectRoute, adminRoute } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.get("/",protectRoute, adminRoute, getAllProducts);
+router.get("/",protectRoute, adminRoute, getAllProducts); //only admins can check all products
 router.get("/featured", getFeaturedProducts);
-router.get("/category", getProductsByCategory);
+router.get("/category/:category", getProductsByCategory);
 router.get("/recommendations", getRecommendedProducts);
 
 //products can be only post or deleted or edit by the admin
