@@ -83,4 +83,4 @@ function getDatesInRange(startDate, endDate) {
 	}
 
 	return dates;
-}
+};
