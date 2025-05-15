@@ -2,13 +2,16 @@ import mongoose from "mongoose";
 
 const orderSchema= new mongoose.Schema(
     {
+        //owner of the order will be some user
         user:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"User",
             required:true,
         },
+        //in the order the user could have various projects so an array of objects
         products:[
             {
+                //ref to the product model
                 product: {
                     type:mongoose.Schema.Types.ObjectId,
                     ref:"Product",
@@ -42,5 +45,5 @@ const orderSchema= new mongoose.Schema(
     }
 );
 
-const Order=mongoose.model("Order", orderSchema);
+const Order = mongoose.model("Order", orderSchema);
 export default Order;

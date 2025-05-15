@@ -12,8 +12,10 @@ export const createCheckoutSession = async(req, res)=>{
 
         let totalAmount=0;
 
+        //each product is mapped into stripe's required format
+        //and the total amount is calculated
         const lineItems= products.map(product=>{
-            const amount= product.price*100 //convert to cents, stripe wantsu to send in the format of cents
+            const amount = Math.round(product.price*100) //convert to cents, stripe wants u to send in the format of cents
             totalAmount+=amount*product.quantity;
 
             return{
@@ -24,7 +26,8 @@ export const createCheckoutSession = async(req, res)=>{
                         images:[product.image],
                     },
                     unit_amount:amount,
-                }
+                },
+                quantity:product.quantity || 1,
             }
         });
 
@@ -32,7 +35,7 @@ export const createCheckoutSession = async(req, res)=>{
         if(couponCode){
             coupon= await Coupon.findOne({code:couponCode, userId:req.user._id, isActive:true});
             if(coupon){
-                totalAmount= Math.round(totalAmount*(1-coupon.disccountPercentage/100));
+                totalAmount -= Math.round((totalAmount * coupon.discountPercentage) / 100);  //amount reduced if the coupon if found for the user
             }
         }
         const session = await Stripe.checkout.sessions.create({
@@ -40,32 +43,38 @@ export const createCheckoutSession = async(req, res)=>{
             line_items:lineItems,
             mode:"payment",
             success_url:`${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url:`${process.env.CLIENT_URL}/purchase-cancelled`,
+            cancel_url:`${process.env.CLIENT_URL}/purchase-cancel`,
             discounts:coupon
-            ? [
-                {
-                    coupon: await createStripeCoupon(coupon.discountPercentage),
-                }
-            ]
-            :[],
+                        ? [
+                            {
+                                coupon: await createStripeCoupon(coupon.discountPercentage),
+                            }
+                        ]
+                        :[],
             metadata:{
                 userId:req.user._id.toString(),
                 couponCode:couponCode||"",
+                products:JSON.stringify(products.map(product=>({
+                    id:product._id,
+                    quantity:product.quantity,
+                    price:product.price,
+                }))),
             },
-        })
+        });
 
         if(totalAmount>=20000){
-            await createNewCoupon(req.user._id);
+            await createNewCoupon(req.user._id);   //creating a new coupon for the user if the total amount spend is greater than $200
         }
-        res.status(200).json({id:session.id, totalAmount:totalAmount/100});
+        res.status(200).json({id:session.id, totalAmount:totalAmount/100}); //cents to dollars
     }catch(error){
         console.error(error);
-        return res.status(500).json({message:"Internal server error"});
+        res.status(500).json({message:"Internal server error"});
     }
 };
 
 
 export const checkoutSuccess = async (req, res) => {
+    //this is called when the payment is successful
     try {
         const { sessionId } = req.body;
         const session = await Stripe.checkout.sessions.retrieve(sessionId);
@@ -107,7 +116,7 @@ export const checkoutSuccess = async (req, res) => {
 
         }
     } catch (error) {
-        console.error("Error in checkout-success route: ", error);
+        console.error("Error in checkout-success contreoller: ", error);
         res.status(500).json({ message: "Error processing successful checkout", error:error.message }); 
     }
 }
@@ -121,12 +130,14 @@ async function createStripeCoupon(discountPercentage){
 }
 
 async function createNewCoupon(userId){
+    await Coupon.findOneAndDelete({userId}); //delete the old coupon if it exists
+
     const newCoupon = new Coupon({
         code:"GIFT" +Math.random().toString(36).substring(2,8).toUpperCase(),
         discountPercentage:10,
         expirationDate: new Date(Date.now()+1000*60*60*24*30), //30 days from now
         userId:userId,
-    })
+    });
     await newCoupon.save();
 
     return newCoupon;
