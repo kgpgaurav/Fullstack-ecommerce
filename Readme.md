@@ -31,3 +31,4 @@ CLIENT_URL=http://localhost:5173
 
 > **Note:** Ensure you replace sensitive information like `<username>`, `<password>`, and other placeholders with your actual credentials. Never share your `.env` file publicly.
 ```  
+
