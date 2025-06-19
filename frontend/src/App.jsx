@@ -3,19 +3,34 @@ import { useEffect,useState } from 'react'
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from "react-hot-toast";
 
-// import HomePage from './pages/HomePage'
+import HomePage from './pages/HomePage'
+import Demo from './pages/demo'
 import LoginPage from './pages/LoginPage'
 import SignUpPage from './pages/SignUpPage'
+import AdminPage from "./pages/AdminPage";
+import CategoryPage from "./pages/CategoryPage";
+// import CartPage from "./pages/CartPage";
+// import PurchaseSuccessPage from "./pages/PurchaseSuccessPage";
+// import PurchaseCancelPage from "./pages/PurchaseCancelPage";
+
 import Navbar from './components/Navbar'
 import { useUserStore } from '../stores/useUserStore'
+import { useCartStore } from '../stores/useCartStore'
 // import LoadingSpinner from './components/LoadingSpinner'
 
 const App = () => {
   const {user,checkAuth, checkingAuth} = useUserStore();
+  const {getCartItems} = useCartStore();
 
   useEffect(()=>{
     checkAuth();
   },[checkAuth])
+  console.log("user", user);
+
+  useEffect(() => {
+      if(!user) return;
+      getCartItems();
+  },[getCartItems,user])
 
   // if(checkingAuth) return <LoadingSpinner/>
   return (
@@ -31,9 +46,11 @@ const App = () => {
         <div className="relative z-50 pt-20">
           <Navbar/>
           <Routes>
-            {/* <Route path="/" element={<HomePage/>} /> */}
+            <Route path="/" element={<HomePage/>} />
             <Route path="/login" element={!user? <LoginPage /> :  <Navigate to='/'/> } />
             <Route path="/signup" element={!user? <SignUpPage /> :  <Navigate to='/'/>} />
+            <Route path="/category/:category" element={<CategoryPage/>} />
+            <Route path="/admin-dashboard" element={user?.role==="admin"? <AdminPage/>: <Navigate to='/' />}/>
           </Routes>
         </div>
         <Toaster/>

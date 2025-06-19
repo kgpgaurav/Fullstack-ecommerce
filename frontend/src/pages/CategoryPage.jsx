@@ -1,22 +1,27 @@
 import { useEffect } from "react";
-import { useProductStore } from "../stores/useProductStore";
 import { useParams } from "react-router-dom";
 import { motion } from "framer-motion";
+
+import { useProductStore } from "../../stores/useProductStore";
 import ProductCard from "../components/ProductCard";
 
 const CategoryPage = () => {
-	const { fetchProductsByCategory, products } = useProductStore();
 
+	const { fetchProductsByCategory, products } = useProductStore();
 	const { category } = useParams();
 
+
+	//when this page is openend we need to fetch the products
 	useEffect(() => {
 		fetchProductsByCategory(category);
 	}, [fetchProductsByCategory, category]);
-
 	console.log("products:", products);
+
+
 	return (
 		<div className='min-h-screen'>
 			<div className='relative z-10 max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16'>
+				{/* motion div for the category title */}
 				<motion.h1
 					className='text-center text-4xl sm:text-5xl font-bold text-emerald-400 mb-8'
 					initial={{ opacity: 0, y: -20 }}
@@ -38,6 +43,7 @@ const CategoryPage = () => {
 						</h2>
 					)}
 
+					{/* products can be fetched when no login but only shown when logged in */}
 					{products?.map((product) => (
 						<ProductCard key={product._id} product={product} />
 					))}

@@ -14,12 +14,12 @@ import analyticsRoutes from './routes/analytics.route.js';
 dotenv.config();
 
 const app=express();
-app.use(express.json()); //allows to parse json data of request body
-app.use(express.urlencoded({extended:true})); //allows to parse urlencoded data of request body
+app.use(express.json({limit:'5mb'})); //allows to parse json data of request body
+app.use(express.urlencoded({limit:"5mb" ,extended:true})); //allows to parse urlencoded data of request body
 app.use(cookieParser());
 
 app.use("/api/auth", authRoutes); 
-app.use("/api/product", productRoutes);
+app.use("/api/products", productRoutes);
 app.use("/api/cart",cartRoutes);
 app.use("/api/coupon",couponRoutes);
 app.use("/api/payments",paymentRoutes);

@@ -49,7 +49,7 @@ export const createProduct = async (req, res)=>{
         });
         res.status(201).json(product);
     }catch(error){
-        console.log("Error in createProduct controller",error.message);
+        console.log("Error in createProduct controller : ",error.message);
         res.status(500).json({message:"server error",error:error.message});
     }
 };
@@ -118,15 +118,14 @@ export const toggleFeaturedProduct = async(req, res)=>{
             product.isFeatured= !product.isFeatured;
             const updatedProduct=await product.save();
             await updateFeaturedProductsCache();
-            res.json(updatedProduct);
+            res.json({updatedProduct,isFeatured:updatedProduct.isFeatured, message: "Product updated successfully"});
         }
         else{
             return res.status(404).json({message:"Product not found"});
         }
-        res.json({updatedProduct, message:"Product updated successfully"});
     }catch(error){
         console.log("Error in toggleFeaturedProduct controller",error.message);
-        res.status(500).json({message:"Server error", error:error.message});
+        res.status(500).json({message:"Server error in toggleFeature product controller", error:error.message});
     }
 };
 

@@ -48,6 +48,7 @@ export const useProductStore = create((set) => ({
 				products: prevProducts.products.filter((product) => product._id !== productId),
 				loading: false,
 			}));
+			toast.success("Product deleted successfully");
 		} catch (error) {
 			set({ loading: false });
 			toast.error(error.response.data.error || "Failed to delete product");
@@ -64,6 +65,7 @@ export const useProductStore = create((set) => ({
 				),
 				loading: false,
 			}));
+			toast.success(response.data.message);
 		} catch (error) {
 			set({ loading: false });
 			toast.error(error.response.data.error || "Failed to update product");
