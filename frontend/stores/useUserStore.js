@@ -7,7 +7,7 @@ export const useUserStore = create((set, get)=>({
     user:null,
     loading:false,
     checkingAuth:true,
-
+    //signup is a method (function property) of the object.
     signup: async ({name, email, password, confirmPassword})=>{
         set({loading:true});
 
@@ -17,6 +17,8 @@ export const useUserStore = create((set, get)=>({
         }
         try{
             const res= await axios.post("/auth/signup",{name, email, password} )
+            //res.data is the user object returned from the backend
+            //res.data,status   // HTTP status code ,statusText  // HTTP status message ,headers   // Response headers ,config    // Axios request config ,request  // The request object
             set({user:res.data,loading:false});
         }catch(err){
             set({loading:false});

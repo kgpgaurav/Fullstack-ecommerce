@@ -68,18 +68,30 @@ export const createCheckoutSession = async(req, res)=>{
         res.status(200).json({id:session.id, totalAmount:totalAmount/100}); //cents to dollars
     }catch(error){
         console.error(error);
-        res.status(500).json({message:"Internal server error"});
+        res.status(500).json({message:"Internali server error"});
     }
 };
 
 
 export const checkoutSuccess = async (req, res) => {
-    //this is called when the payment is successful
     try {
         const { sessionId } = req.body;
+        if (!sessionId) {
+            return res.status(400).json({ message: "Missing sessionId" });
+        }
         const session = await Stripe.checkout.sessions.retrieve(sessionId);
 
         if (session.payment_status === "paid") {
+            // Check for existing order
+            let existingOrder = await Order.findOne({ stripeSessionId: sessionId });
+            if (existingOrder) {
+                return res.status(200).json({
+                    success: true,
+                    message: "Order already exists for this session.",
+                    orderId: existingOrder._id,
+                });
+            }
+
             //update the user's purchase history
             if (session.metadata.couponCode) {
                 await Coupon.findOneAndUpdate(
@@ -114,12 +126,14 @@ export const checkoutSuccess = async (req, res) => {
                 orderId: newOrder._id,
             });
 
+        } else {
+            return res.status(400).json({ message: "Payment not completed", status: session.payment_status });
         }
     } catch (error) {
-        console.error("Error in checkout-success contreoller: ", error);
-        res.status(500).json({ message: "Error processing successful checkout", error:error.message }); 
+        console.error("Error in checkout-success controller: ", error);
+        res.status(500).json({ message: "Error processing successful checkout", error: error.message });
     }
-}
+};
 
 async function createStripeCoupon(discountPercentage){
     const coupon= await Stripe.coupons.create({
