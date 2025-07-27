@@ -1,8 +1,6 @@
 # 🛒 E-Commerce Application
 
-A full-stack e-commerce application built with **React**, **Node.js**, **Express**, and **MongoDB**. Features include user authentication, product management, shopping cart, payment processing with Stripe, and admin analytics.
-
-![E-Commerce Screenshot](frontend/public/screenshot-for-readme.png)
+A full-stack e-commerce application built with **React**, **Node.js**, **Express**, and **MongoDB**. This project demonstrates modern web development practices with features including user authentication, product management, shopping cart, payment processing with Stripe, and admin analytics.
 
 ## ✨ Features
 
