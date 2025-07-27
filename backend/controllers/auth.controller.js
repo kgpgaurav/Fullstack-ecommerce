@@ -83,7 +83,7 @@ export const login = async (req, res) => {
             });
         }
         else {
-            return res.status(401).json({ message: "Invalid email or password" }); //401 represents unauthorized
+            return res.status(400).json({ message: "Invalid email or password" }); //400 represents bad request
         }
     } catch (error) {
         console.log("error in login controller",error.message);

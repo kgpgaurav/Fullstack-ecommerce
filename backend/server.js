@@ -21,7 +21,30 @@ validateEnvironment();
 const app=express();
 
 // Security middleware
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: [
+                "'self'", 
+                "'unsafe-inline'", 
+                "https://js.stripe.com",
+                "https://checkout.stripe.com"
+            ],
+            frameSrc: [
+                "'self'", 
+                "https://js.stripe.com",
+                "https://hooks.stripe.com",
+                "https://checkout.stripe.com"
+            ],
+            connectSrc: [
+                "'self'", 
+                "https://api.stripe.com",
+                "https://checkout.stripe.com"
+            ],
+        },
+    },
+}));
 app.use(cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true
