@@ -5,8 +5,8 @@ import dotenv from "dotenv"
 dotenv.config();
 
 export const redis = new Redis({
-  url: 'https://finer-gazelle-46869.upstash.io',
-  token: 'AbcVAAIjcDFiYzg1NjRiOTZlOTY0MGI5OThhODY4Y2FjNjM4NGY3YXAxMA',
+  url: process.env.UPSTASH_REDIS_URL,
+  token: process.env.UPSTASH_REDIS_TOKEN,
 })
 // await redis.set('foo', 'bar');
 
