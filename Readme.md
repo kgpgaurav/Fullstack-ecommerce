@@ -336,6 +336,8 @@ This project is licensed under the ISC License.
 
 **Kumar Gaurav Prakash**
 - GitHub: [@kgpgaurav](https://github.com/kgpgaurav)
+**Adhiraj Gupta**
+- GitHub: [@adhirajgupta22](https://github.com/adhirajgupta22)
 
 ## 🙏 Acknowledgments
 
